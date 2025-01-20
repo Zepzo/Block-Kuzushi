@@ -15,11 +15,11 @@ int main(void)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-
     Vector2 BordPosition = { 450, 600};
     
     Vector2 BallPosition = { 525, 570};
     Vector2 BallSpeed = { -5, -5};
+    
         
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -47,15 +47,26 @@ int main(void)
         BallPosition.x += BallSpeed.x;
         BallPosition.y += BallSpeed.y;
         
-        //if ((BallPosition.x >= (GetScreenWidth() - 10)) || (BallPosition.x <= 0)) BallSpeed.x *= -1.0f;
-        //if ((BallPosition.y >= (GetScreenHeight() - 10)) || (BallPosition.y <= 0)) BallSpeed.y *= -1.0f;
+        //if ((ballPosition.x >= (GetScreenWidth() - ballRadius)) || (ballPosition.x <= ballRadius)) ballSpeed.x *= -1.0f;
+        //if ((ballPosition.y >= (GetScreenHeight() - ballRadius)) || (ballPosition.y <= ballRadius)) ballSpeed.y *= -1.0f;
+        
         
         if((BallPosition.x >= (GetScreenWidth() - 10)) || (BallPosition.x <= 10)){
             BallSpeed.x *= -1.0f;
         }
         
-        if((BallPosition.y >= (BallPosition.y <= 10))){
+        if((BallPosition.y >= (GetScreenHeight() - 10)) || (BallPosition.y <= 10)){
             BallSpeed.y *= -1.0f;
+        }
+                
+        if(BallPosition.y >= (GetScreenHeight() - 10)){
+            BallSpeed.x = 0;
+            BallSpeed.y = 0;
+        }
+        
+        if(IsKeyPressed(KEY_W)){
+            BallSpeed.x = 5;
+            BallSpeed.y = -5;
         }
         
         BeginDrawing();
