@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "raymath.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -7,14 +8,19 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1000;
+    const int screenHeight = 650;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    InitWindow(screenWidth, screenHeight, "My block kuzushi game");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    Vector2 BordPosition = { 450, 600};
+    
+    Vector2 BallPosition = { 525, 570};
+    Vector2 BallSpeed = { -5, -5};
+        
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -25,12 +31,42 @@ int main(void)
 
         // Draw
         //----------------------------------------------------------------------------------
+        
+        if(BordPosition.x > 0){
+            if (IsKeyDown(KEY_A)){
+                BordPosition.x -= 6;
+            }
+        }
+        
+        if(BordPosition.x < 850){
+            if (IsKeyDown(KEY_D)){
+                BordPosition.x += 6;
+            }
+        }
+    
+        BallPosition.x += BallSpeed.x;
+        BallPosition.y += BallSpeed.y;
+        
+        //if ((BallPosition.x >= (GetScreenWidth() - 10)) || (BallPosition.x <= 0)) BallSpeed.x *= -1.0f;
+        //if ((BallPosition.y >= (GetScreenHeight() - 10)) || (BallPosition.y <= 0)) BallSpeed.y *= -1.0f;
+        
+        if((BallPosition.x >= (GetScreenWidth() - 10)) || (BallPosition.x <= 10)){
+            BallSpeed.x *= -1.0f;
+        }
+        
+        if((BallPosition.y >= (BallPosition.y <= 10))){
+            BallSpeed.y *= -1.0f;
+        }
+        
         BeginDrawing();
-
+        {
             ClearBackground(RAYWHITE);
 
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
+            DrawCircle( BallPosition.x, BallPosition.y, 5, BLACK);
+            
+            DrawRectangle( BordPosition.x, BordPosition.y, 150, 30, WHITE);
+            DrawRectangleLines( BordPosition.x, BordPosition.y, 150, 30, BLACK);
+        }    
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
