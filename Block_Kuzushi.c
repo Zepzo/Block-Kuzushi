@@ -1,39 +1,46 @@
 #include "raylib.h"
 #include "raymath.h"
+#include <stdint.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
+
+
 int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1000;
     const int screenHeight = 650;
+    
+    Vector2 BordPosition = { 450, 600};
+    
+    Vector2 BallPosition = { 525, 570};
+    Vector2 BallSpeed = { -5, -5}; 
+    
+    int BordWidth = 150;
+    int BordHight = 30;
+    Color BordColor = WHITE;
+    Color BordFrame = BLACK;
+    
+    int BallRadius = 5;
+    Color BallColor = BLACK;
 
     InitWindow(screenWidth, screenHeight, "My block kuzushi game");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-    Vector2 BordPosition = { 450, 600};
-    
-    Vector2 BallPosition = { 525, 570};
-    Vector2 BallSpeed = { -5, -5};  
+     
         
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        Rectangle Bord = { BordPosition.x, BordPosition.y, 150, 30};
-        Rectangle Ball = {BallPosition.x, BallPosition.y, 10, 10}; 
-        
-        bool Collition = false;
-
+    { 
         // Update
         //----------------------------------------------------------------------------------
         
         // bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec);
-        
-        Collition = CheckCollisionRecs(Bord, Ball);
+        //Collition = CheckCollisionRecs(Bord, Ball);
 
         
         if(BordPosition.x > 0){ // moves the board
@@ -51,22 +58,21 @@ int main(void)
         BallPosition.x += BallSpeed.x;
         BallPosition.y += BallSpeed.y;
         
-        if((BallPosition.x >= (GetScreenWidth() - 10)) || (BallPosition.x <= 10)){ // bounce the ball in the oposite direction
+        if((BallPosition.x >= (GetScreenWidth() - 5)) || (BallPosition.x <= 5)){ // bounce the ball in the oposite direction
             BallSpeed.x *= -1.0f;
         }
         
-        if((BallPosition.y >= (GetScreenHeight() - 10)) || (BallPosition.y <= 10)){ // bounce the ball in the oposite direction
-            BallSpeed.y *= -1.0f;
-        }
-        
-        if(Collition){
-            BallSpeed.x *= -1.0f;
+        if((BallPosition.y >= (GetScreenHeight() - 5)) || (BallPosition.y <= 5)){ // bounce the ball in the oposite direction
             BallSpeed.y *= -1.0f;
         }
                 
-        if(BallPosition.y >= (GetScreenHeight() - 10)){ // stops the ball when it hits the bottom edge
+        if(BallPosition.y >= (GetScreenHeight() - 5)){ // stops the ball when it hits the bottom edge
             BallSpeed.x = 0;
             BallSpeed.y = 0;
+        }
+        
+        if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+            BallSpeed.y *= -1.0f;
         }
         
         if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
@@ -82,12 +88,12 @@ int main(void)
         {
             ClearBackground(RAYWHITE);
 
-            //DrawCircle( BallPosition.x, BallPosition.y, 5, BLACK);
-            DrawRectangleRec(Ball, BLACK);
+            DrawCircle( BallPosition.x, BallPosition.y, BallRadius, BallColor);
+            //DrawRectangleRec(Ball, BLACK);
             
-            //DrawRectangle( BordPosition.x, BordPosition.y, 150, 30, WHITE);
-            DrawRectangleRec(Bord, WHITE);
-            DrawRectangleLines( BordPosition.x, BordPosition.y, 150, 30, BLACK);
+            DrawRectangle( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordColor);
+            //DrawRectangleRec(Bord, WHITE);
+            DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
             
         }    
         EndDrawing();
