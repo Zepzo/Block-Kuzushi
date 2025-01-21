@@ -1,11 +1,19 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <stdint.h>
+#include <stdlib.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
 
+typedef struct Box{
+    float x;                
+    float y;                
+    float width;           
+    float height;
+    int On;
+}Box;
 
 int main(void)
 {
@@ -14,17 +22,20 @@ int main(void)
     const int screenWidth = 1000;
     const int screenHeight = 650;
     
-    int AmountOfBoxes = 30;
+    int AmountOfBoxes = 10;
     
-    Rectangle Boxes[AmountOfBoxes];
+    Box Boxes[AmountOfBoxes];
     
     for(int i = 0; i < AmountOfBoxes; i++){
         Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
         Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
         Boxes[i].width = 70;
         Boxes[i].height = 30;
+        Boxes[i].On = 1;
     }
     
+    int Grid[20][20];
+        
     Vector2 BordPosition = { 450, 600};
     
     Vector2 BallPosition = { 525, 570};
@@ -35,8 +46,12 @@ int main(void)
     Color BordColor = WHITE;
     Color BordFrame = BLACK;
     
-    int BallRadius = 5;
+    float BallRadius = 5;
     Color BallColor = BLACK;
+    
+    Rectangle Ball = {BallPosition.x, BallPosition.y, BallRadius, BallRadius};
+    
+    bool Colition = false;
 
     InitWindow(screenWidth, screenHeight, "My block kuzushi game");
 
@@ -50,9 +65,9 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         
-        // bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec);
-        //Collition = CheckCollisionRecs(Bord, Ball);
-
+        /*for(int i = 0; i < AmountOfBoxes; i++){
+            Colition == CheckCollisionCircleRec(BallPosition, BallRadius, Boxes[i]);
+        }*/
         
         if(BordPosition.x > 0){ // moves the board
             if (IsKeyDown(KEY_A)){
@@ -82,9 +97,11 @@ int main(void)
             BallSpeed.y = 0;
         }
         
+        //Bounce the ball of the boxes
         for(int i = 0; i < AmountOfBoxes; i++){
             if(BallPosition.y <= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
                 BallSpeed.y *= -1.0f;
+                Boxes[i].On = 0;
             }
         }
         
@@ -108,12 +125,27 @@ int main(void)
 
             DrawCircle( BallPosition.x, BallPosition.y, BallRadius, BallColor);
             
+            //DrawRectangleRec(Ball, BallColor);
+            
             DrawRectangle( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordColor);
             DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
             
             for(int i = 0; i < AmountOfBoxes; i++){
-                DrawRectangleRec(Boxes[i], GREEN);
+                if(Boxes[i].On = 1){
+                 DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
+                }
+                else{
+                    
+                }
             }
+            
+            /*for(int y = 0;y < 20; y++){
+                for(int x = 0; x < 20; x++){
+                    if(Grid[y][x] = 1){
+                        DrawRectangle(10.0f + 90.0f *(x%10) + 10.0f *(x%10), 20.0f + 90.0f *(y/10) + 10.0f *(y/10), 70, 30, GREEN);
+                    }
+                }
+            }*/
             
         }    
         EndDrawing();
