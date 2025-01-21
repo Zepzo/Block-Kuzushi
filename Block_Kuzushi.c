@@ -14,6 +14,17 @@ int main(void)
     const int screenWidth = 1000;
     const int screenHeight = 650;
     
+    int AmountOfBoxes = 30;
+    
+    Rectangle Boxes[AmountOfBoxes];
+    
+    for(int i = 0; i < AmountOfBoxes; i++){
+        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
+        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
+        Boxes[i].width = 70;
+        Boxes[i].height = 30;
+    }
+    
     Vector2 BordPosition = { 450, 600};
     
     Vector2 BallPosition = { 525, 570};
@@ -71,6 +82,13 @@ int main(void)
             BallSpeed.y = 0;
         }
         
+        for(int i = 0; i < AmountOfBoxes; i++){
+            if(BallPosition.y <= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
+                BallSpeed.y *= -1.0f;
+            }
+        }
+        
+        //The Ball abounce of the bord
         if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
             BallSpeed.y *= -1.0f;
         }
@@ -89,11 +107,13 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             DrawCircle( BallPosition.x, BallPosition.y, BallRadius, BallColor);
-            //DrawRectangleRec(Ball, BLACK);
             
             DrawRectangle( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordColor);
-            //DrawRectangleRec(Bord, WHITE);
             DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
+            
+            for(int i = 0; i < AmountOfBoxes; i++){
+                DrawRectangleRec(Boxes[i], GREEN);
+            }
             
         }    
         EndDrawing();
