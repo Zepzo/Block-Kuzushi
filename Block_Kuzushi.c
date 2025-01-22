@@ -57,6 +57,7 @@ int main(void)
     bool exitWindow = false;    // Flag to set window to exit
     
     int WinGame = 0;
+    int Lives = 3;
     
     GameScreen CurenScreen = Main;
             
@@ -107,14 +108,41 @@ int main(void)
                 }
                         
                 if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
-                    WinGame = 0;
-                    CurenScreen = GameOver;
+                    Lives--;
+                    BallSpeed.x = 0;
+                    BallSpeed.y = 0;
+                    BallPosition.x = 525;
+                    BallPosition.y = 570;
+                    if(Lives <= 0){
+                        WinGame = 0;
+                        Lives =3;
+                        CurenScreen = GameOver;
+                    }
                 }
                 
                 if(WinGame == 10){
-                                WinGame = 0;
-                                CurenScreen = WinScreen;
-                            }
+                    
+                    for(int i = 0; i < AmountOfBoxes * level_2; i++){
+                        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 70;
+                        Boxes[i].height = 30;
+                        Boxes[i].alive = true;
+                        Boxes[i].Hp = 1;
+                    }
+                    
+                    BordPosition.x = 450;
+                    BordPosition.y = 600;
+                    
+                    BallPosition.x = 525;
+                    BallPosition.y = 570;
+                    
+                    BallSpeed.x = -5;
+                    BallSpeed.y = -5;
+                    
+                    WinGame = 0;
+                    CurenScreen = level_2;
+                }
                 
                 //Bounce the ball of the boxes
                 for(int i = 0; i < AmountOfBoxes; i++){
@@ -130,8 +158,6 @@ int main(void)
                 //The Ball abounce of the bord
                 if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
                     BallSpeed.y *= -1.0f;
-                    BallSpeed.x = (BallPosition.x - BordPosition.x)*5;
-
                 }
                 
                 if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
@@ -142,7 +168,69 @@ int main(void)
             }break;
             case level_2:
             {
+                if(!exitWindowRequested){
+                     if(BordPosition.x > 0){ // moves the board
+                        if (IsKeyDown(KEY_A)){
+                            BordPosition.x -= 6;
+                        }
+                    }
+                    
+                    if(BordPosition.x < 850){ // moves the board
+                        if (IsKeyDown(KEY_D)){
+                            BordPosition.x += 6;
+                        }
+                    }
                 
+                    BallPosition.x += BallSpeed.x;
+                    BallPosition.y += BallSpeed.y;
+                    
+                    if((BallPosition.x >= (GetScreenWidth() - BallRadius)) || (BallPosition.x <= BallRadius)){//bounce the ball in the oposite direction
+                        BallSpeed.x *= -1.0f;
+                    }
+                    
+                    if((BallPosition.y >= (GetScreenHeight() - BallRadius)) || (BallPosition.y <= BallRadius)){ // bounce the ball in the oposite direction
+                        BallSpeed.y *= -1.0f;
+                    }
+                            
+                    if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
+                        Lives--;
+                        BallSpeed.x = 0;
+                        BallSpeed.y = 0;
+                        BallPosition.x = 525;
+                        BallPosition.y = 570;
+                        if(Lives <= 0){
+                            WinGame = 0;
+                            Lives =3;
+                            CurenScreen = GameOver;
+                        }
+                    }
+                    
+                    if(WinGame == 10 * level_2){
+                        WinGame = 0;
+                        CurenScreen = WinScreen;
+                    }
+                    
+                    //Bounce the ball of the boxes
+                    for(int i = 0; i < AmountOfBoxes * level_2; i++){
+                        if(Boxes[i].alive){
+                            if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
+                                BallSpeed.y *= -1.0f;
+                                Boxes[i].alive = false;
+                                WinGame++;
+                            }
+                        }
+                    }
+                    
+                    //The Ball abounce of the bord
+                    if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+                        BallSpeed.y *= -1.0f;
+                    }
+                    
+                    if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
+                        BallSpeed.x = 5;
+                        BallSpeed.y = -5;
+                    }
+                }    
             }break;
             case level_3:
             {
@@ -240,10 +328,21 @@ int main(void)
                      DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
                     }
                 }
+                DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
             }break;
             case level_2:
             {
+                DrawCircle( BallPosition.x, BallPosition.y, BallRadius, BallColor);
+            
+                DrawRectangle( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordColor);
+                DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
                 
+                for(int i = 0; i < AmountOfBoxes * level_2; i++){
+                    if(Boxes[i].alive){
+                     DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
+                    }
+                }
+                DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
             }break;
             case level_3:
             {
