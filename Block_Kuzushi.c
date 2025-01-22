@@ -12,7 +12,7 @@ typedef struct Box{
     float y;                
     float width;           
     float height;
-    int On;
+    bool On;
 }Box;
 
 int main(void)
@@ -22,7 +22,7 @@ int main(void)
     const int screenWidth = 1000;
     const int screenHeight = 650;
     
-    int AmountOfBoxes = 10;
+    int AmountOfBoxes = 20;
     
     Box Boxes[AmountOfBoxes];
     
@@ -31,11 +31,9 @@ int main(void)
         Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
         Boxes[i].width = 70;
         Boxes[i].height = 30;
-        Boxes[i].On = 1;
+        Boxes[i].On = true;
     }
-    
-    int Grid[20][20];
-        
+            
     Vector2 BordPosition = { 450, 600};
     
     Vector2 BallPosition = { 525, 570};
@@ -48,11 +46,7 @@ int main(void)
     
     float BallRadius = 5;
     Color BallColor = BLACK;
-    
-    Rectangle Ball = {BallPosition.x, BallPosition.y, BallRadius, BallRadius};
-    
-    bool Colition = false;
-
+            
     InitWindow(screenWidth, screenHeight, "My block kuzushi game");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -101,7 +95,8 @@ int main(void)
         for(int i = 0; i < AmountOfBoxes; i++){
             if(BallPosition.y <= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
                 BallSpeed.y *= -1.0f;
-                Boxes[i].On = 0;
+                Boxes[i].width = 0;
+                Boxes[i].height = 0;
             }
         }
         
@@ -131,21 +126,10 @@ int main(void)
             DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
             
             for(int i = 0; i < AmountOfBoxes; i++){
-                if(Boxes[i].On = 1){
+                if( Boxes[i].width > 0 && Boxes[i].height > 0){
                  DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
                 }
-                else{
-                    
-                }
             }
-            
-            /*for(int y = 0;y < 20; y++){
-                for(int x = 0; x < 20; x++){
-                    if(Grid[y][x] = 1){
-                        DrawRectangle(10.0f + 90.0f *(x%10) + 10.0f *(x%10), 20.0f + 90.0f *(y/10) + 10.0f *(y/10), 70, 30, GREEN);
-                    }
-                }
-            }*/
             
         }    
         EndDrawing();
