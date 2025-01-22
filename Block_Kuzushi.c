@@ -48,6 +48,9 @@ int main(void)
     
     float BallRadius = 5;
     Color BallColor = BLACK;
+    
+    bool exitWindowRequested = false;   // Flag to request window to exit
+    bool exitWindow = false;    // Flag to set window to exit
             
     InitWindow(screenWidth, screenHeight, "My block kuzushi game");
 
@@ -56,59 +59,71 @@ int main(void)
      
         
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!exitWindow)    // Detect window close button or ESC key
     { 
         // Update
         //----------------------------------------------------------------------------------
         
-        if(BordPosition.x > 0){ // moves the board
-            if (IsKeyDown(KEY_A)){
-                BordPosition.x -= 6;
-            }
-        }
-        
-        if(BordPosition.x < 850){ // moves the board
-            if (IsKeyDown(KEY_D)){
-                BordPosition.x += 6;
-            }
-        }
-    
-        BallPosition.x += BallSpeed.x;
-        BallPosition.y += BallSpeed.y;
-        
-        if((BallPosition.x >= (GetScreenWidth() - BallRadius)) || (BallPosition.x <= BallRadius)){ // bounce the ball in the oposite direction
-            BallSpeed.x *= -1.0f;
-        }
-        
-        if((BallPosition.y >= (GetScreenHeight() - BallRadius)) || (BallPosition.y <= BallRadius)){ // bounce the ball in the oposite direction
-            BallSpeed.y *= -1.0f;
-        }
-                
-        if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
-            BallSpeed.x = 0;
-            BallSpeed.y = 0;
-        }
-        
-        //Bounce the ball of the boxes
-        for(int i = 0; i < AmountOfBoxes; i++){
-            if(Boxes[i].alive){
-                if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
-                    BallSpeed.y *= -1.0f;
-                    //Boxes[i].width = 0;
-                    //Boxes[i].height = 0;
-                    Boxes[i].alive = false;
+        if(!exitWindowRequested){
+             if(BordPosition.x > 0){ // moves the board
+                if (IsKeyDown(KEY_A)){
+                    BordPosition.x -= 6;
                 }
             }
+            
+            if(BordPosition.x < 850){ // moves the board
+                if (IsKeyDown(KEY_D)){
+                    BordPosition.x += 6;
+                }
+            }
+        
+            BallPosition.x += BallSpeed.x;
+            BallPosition.y += BallSpeed.y;
+            
+            if((BallPosition.x >= (GetScreenWidth() - BallRadius)) || (BallPosition.x <= BallRadius)){ // bounce the ball in the oposite direction
+                BallSpeed.x *= -1.0f;
+            }
+            
+            if((BallPosition.y >= (GetScreenHeight() - BallRadius)) || (BallPosition.y <= BallRadius)){ // bounce the ball in the oposite direction
+                BallSpeed.y *= -1.0f;
+            }
+                    
+            if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
+                BallSpeed.x = 0;
+                BallSpeed.y = 0;
+            }
+            
+            //Bounce the ball of the boxes
+            for(int i = 0; i < AmountOfBoxes; i++){
+                if(Boxes[i].alive){
+                    if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
+                        BallSpeed.y *= -1.0f;
+                        Boxes[i].alive = false;
+                    }
+                }
+            }
+            
+            //The Ball abounce of the bord
+            if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+                BallSpeed.y *= -1.0f;
+            }
+            
+            if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
+                BallSpeed.x = 5;
+                BallSpeed.y = -5;
+            }   
         }
         
-        //The Ball abounce of the bord
-        if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
-            BallSpeed.y *= -1.0f;
-        }
+        // Detect if X-button or KEY_ESCAPE have been pressed to close window
+        if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) exitWindowRequested = true;
         
-        if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
-            BallSpeed.x = 5;
-            BallSpeed.y = -5;
+        if (exitWindowRequested)
+        {
+            // A request for close window has been issued, we can save data before closing
+            // or just show a message asking for confirmation
+            
+            if (IsKeyPressed(KEY_Y)) exitWindow = true;
+            else if (IsKeyPressed(KEY_N)) exitWindowRequested = false;
         }
         //----------------------------------------------------------------------------------
 
@@ -128,6 +143,12 @@ int main(void)
                 if(Boxes[i].alive){
                  DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
                 }
+            }
+            
+            if (exitWindowRequested)
+            {
+                DrawRectangle(0, 100, screenWidth, 200, BLACK);
+                DrawText("Are you sure you want to exit program? [Y/N]", 40, 180, 30, WHITE);
             }
             
         }    
