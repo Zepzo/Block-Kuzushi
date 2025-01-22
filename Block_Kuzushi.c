@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -12,8 +13,9 @@ typedef struct Box{
     float y;                
     float width;           
     float height;
-    bool On;
+    bool alive;
 }Box;
+
 
 int main(void)
 {
@@ -31,7 +33,7 @@ int main(void)
         Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
         Boxes[i].width = 70;
         Boxes[i].height = 30;
-        Boxes[i].On = true;
+        Boxes[i].alive = true;
     }
             
     Vector2 BordPosition = { 450, 600};
@@ -59,10 +61,6 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         
-        /*for(int i = 0; i < AmountOfBoxes; i++){
-            Colition == CheckCollisionCircleRec(BallPosition, BallRadius, Boxes[i]);
-        }*/
-        
         if(BordPosition.x > 0){ // moves the board
             if (IsKeyDown(KEY_A)){
                 BordPosition.x -= 6;
@@ -78,25 +76,28 @@ int main(void)
         BallPosition.x += BallSpeed.x;
         BallPosition.y += BallSpeed.y;
         
-        if((BallPosition.x >= (GetScreenWidth() - 5)) || (BallPosition.x <= 5)){ // bounce the ball in the oposite direction
+        if((BallPosition.x >= (GetScreenWidth() - BallRadius)) || (BallPosition.x <= BallRadius)){ // bounce the ball in the oposite direction
             BallSpeed.x *= -1.0f;
         }
         
-        if((BallPosition.y >= (GetScreenHeight() - 5)) || (BallPosition.y <= 5)){ // bounce the ball in the oposite direction
+        if((BallPosition.y >= (GetScreenHeight() - BallRadius)) || (BallPosition.y <= BallRadius)){ // bounce the ball in the oposite direction
             BallSpeed.y *= -1.0f;
         }
                 
-        if(BallPosition.y >= (GetScreenHeight() - 5)){ // stops the ball when it hits the bottom edge
+        if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
             BallSpeed.x = 0;
             BallSpeed.y = 0;
         }
         
         //Bounce the ball of the boxes
         for(int i = 0; i < AmountOfBoxes; i++){
-            if(BallPosition.y <= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
-                BallSpeed.y *= -1.0f;
-                Boxes[i].width = 0;
-                Boxes[i].height = 0;
+            if(Boxes[i].alive){
+                if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
+                    BallSpeed.y *= -1.0f;
+                    //Boxes[i].width = 0;
+                    //Boxes[i].height = 0;
+                    Boxes[i].alive = false;
+                }
             }
         }
         
@@ -120,13 +121,11 @@ int main(void)
 
             DrawCircle( BallPosition.x, BallPosition.y, BallRadius, BallColor);
             
-            //DrawRectangleRec(Ball, BallColor);
-            
             DrawRectangle( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordColor);
             DrawRectangleLines( BordPosition.x, BordPosition.y, BordWidth, BordHight, BordFrame);
             
             for(int i = 0; i < AmountOfBoxes; i++){
-                if( Boxes[i].width > 0 && Boxes[i].height > 0){
+                if(Boxes[i].alive){
                  DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
                 }
             }
