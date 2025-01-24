@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -29,13 +30,15 @@ int main(void)
     
     int AmountOfBoxes = 10;
     
+    float Angel;
+    
     Box Boxes[AmountOfBoxes];
     
     for(int i = 0; i < AmountOfBoxes; i++){
-        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
-        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
-        Boxes[i].width = 70;
-        Boxes[i].height = 30;
+        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
+        Boxes[i].width = 90;
+        Boxes[i].height = 40;
         Boxes[i].alive = true;
         Boxes[i].Hp = 1;
     }
@@ -123,10 +126,10 @@ int main(void)
                 if(WinGame == 10){
                     
                     for(int i = 0; i < AmountOfBoxes * level_2; i++){
-                        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 70;
-                        Boxes[i].height = 30;
+                        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 90;
+                        Boxes[i].height = 40;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
@@ -158,6 +161,8 @@ int main(void)
                 //The Ball abounce of the bord
                 if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
                     BallSpeed.y *= -1.0f;
+                    
+                    //BallSpeed.x = (BallPosition.x - BordPosition.x)/(BordWidth/2)*5;
                 }
                 
                 if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
@@ -241,13 +246,15 @@ int main(void)
                 if(IsKeyPressed(KEY_SPACE)){ 
                 
                     for(int i = 0; i < AmountOfBoxes; i++){
-                        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 70;
-                        Boxes[i].height = 30;
+                        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 90;
+                        Boxes[i].height = 40;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
+                    
+                    Lives = 3;
                     
                     BordPosition.x = 450;
                     BordPosition.y = 600;
@@ -266,13 +273,15 @@ int main(void)
                 if(IsKeyPressed(KEY_SPACE)){ 
                 
                     for(int i = 0; i < AmountOfBoxes; i++){
-                        Boxes[i].x = 10.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 20.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 70;
-                        Boxes[i].height = 30;
+                        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 90;
+                        Boxes[i].height = 40;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
+                    
+                    Lives = 3;
                     
                     BordPosition.x = 450;
                     BordPosition.y = 600;
@@ -325,7 +334,8 @@ int main(void)
                 
                 for(int i = 0; i < AmountOfBoxes; i++){
                     if(Boxes[i].alive){
-                     DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
+                     DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);
+                     DrawRectangleLines(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, DARKGREEN);
                     }
                 }
                 DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
@@ -339,7 +349,8 @@ int main(void)
                 
                 for(int i = 0; i < AmountOfBoxes * level_2; i++){
                     if(Boxes[i].alive){
-                     DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);   
+                     DrawRectangle(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, GREEN);
+                     DrawRectangleLines(Boxes[i].x, Boxes[i].y, Boxes[i].width, Boxes[i].height, DARKGREEN);
                     }
                 }
                 DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
