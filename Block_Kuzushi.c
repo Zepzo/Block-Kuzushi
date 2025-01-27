@@ -368,12 +368,14 @@ int main(void)
             case GameOver:
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
-                DrawText("GameOver press [Space] to restart", 40, 280, 50, WHITE);
+                DrawText("GameOver press [Space] to restart", 40, 180, 50, WHITE);
+                DrawText("Press [ESC] to quit", 40, 280, 50, WHITE);
             }break;
             case WinScreen:
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
-                DrawText("You win, press [Space] to restart", 40, 280, 50, WHITE);
+                DrawText("You win, press [Space] to restart", 40, 180, 50, WHITE);
+                DrawText("Press [ESC] to quit", 40, 280, 50, WHITE);
                 DrawText(TextFormat("Score; %03i", Score), 40, 380, 50, WHITE);
             }break;
             default: break;
