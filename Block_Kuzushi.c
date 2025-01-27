@@ -62,6 +62,8 @@ int main(void)
     int WinGame = 0;
     int Lives = 3;
     
+    int Score = 0;
+    
     GameScreen CurenScreen = Main;
             
     InitWindow(screenWidth, screenHeight, "My block kuzushi game");
@@ -112,13 +114,14 @@ int main(void)
                         
                 if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
                     Lives--;
+                    Score -= 10;
                     BallSpeed.x = 0;
                     BallSpeed.y = 0;
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     if(Lives <= 0){
                         WinGame = 0;
-                        Lives =3;
+                        Score -= 10;
                         CurenScreen = GameOver;
                     }
                 }
@@ -153,6 +156,7 @@ int main(void)
                         if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
                             BallSpeed.y *= -1.0f;
                             Boxes[i].alive = false;
+                            Score += 100;
                             WinGame++;
                         }
                     }
@@ -199,6 +203,7 @@ int main(void)
                             
                     if(BallPosition.y >= (GetScreenHeight() - BallRadius)){ // stops the ball when it hits the bottom edge
                         Lives--;
+                        Score -= 10;
                         BallSpeed.x = 0;
                         BallSpeed.y = 0;
                         BallPosition.x = 525;
@@ -221,6 +226,7 @@ int main(void)
                             if(BallPosition.y >= Boxes[i].y && BallPosition.y <= Boxes[i].y + Boxes[i].height && BallPosition.x >= Boxes[i].x && BallPosition.x <= Boxes[i].x + Boxes[i].width){
                                 BallSpeed.y *= -1.0f;
                                 Boxes[i].alive = false;
+                                Score += 100;
                                 WinGame++;
                             }
                         }
@@ -368,6 +374,7 @@ int main(void)
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
                 DrawText("You win, press [Space] to restart", 40, 280, 50, WHITE);
+                DrawText(TextFormat("Score; %03i", Score), 40, 380, 50, WHITE);
             }break;
             default: break;
         }
