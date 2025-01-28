@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <time.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -28,17 +29,19 @@ int main(void)
     const int screenWidth = 1000;
     const int screenHeight = 650;
     
-    int AmountOfBoxes = 10;
+    float DeltaTime = GetFrameTime();
     
-    float Angel;
+    srand(time(NULL));
+    
+    int AmountOfBoxes = 10;
     
     Box Boxes[AmountOfBoxes];
     
     for(int i = 0; i < AmountOfBoxes; i++){
         Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
-        Boxes[i].width = 90;
-        Boxes[i].height = 40;
+        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+        Boxes[i].width = 95;
+        Boxes[i].height = 50;
         Boxes[i].alive = true;
         Boxes[i].Hp = 1;
     }
@@ -46,7 +49,11 @@ int main(void)
     Vector2 BordPosition = { 450, 600};
     
     Vector2 BallPosition = { 525, 570};
-    Vector2 BallSpeed = { -5, -5}; 
+    Vector2 BallSpeed = { -8, -8}; 
+    
+    Vector2 PowerUpPosition;
+    Vector2 PowerUpSpeed = {0, 2};
+    bool PowerUpIsAlive = false;
     
     int BordWidth = 150;
     int BordHight = 30;
@@ -91,13 +98,13 @@ int main(void)
                 if(!exitWindowRequested){
                  if(BordPosition.x > 0){ // moves the board
                     if (IsKeyDown(KEY_A)){
-                        BordPosition.x -= 6;
+                        BordPosition.x -= 7;
                     }
                 }
                 
                 if(BordPosition.x < 850){ // moves the board
                     if (IsKeyDown(KEY_D)){
-                        BordPosition.x += 6;
+                        BordPosition.x += 7;
                     }
                 }
             
@@ -119,9 +126,10 @@ int main(void)
                     BallSpeed.y = 0;
                     BallPosition.x = 525;
                     BallPosition.y = 570;
+                    Score -= 500;
+
                     if(Lives <= 0){
                         WinGame = 0;
-                        Score -= 10;
                         CurenScreen = GameOver;
                     }
                 }
@@ -130,9 +138,9 @@ int main(void)
                     
                     for(int i = 0; i < AmountOfBoxes * level_2; i++){
                         Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 90;
-                        Boxes[i].height = 40;
+                        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 95;
+                        Boxes[i].height = 50;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
@@ -143,11 +151,16 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -5;
-                    BallSpeed.y = -5;
+                    BallSpeed.x = -8;
+                    BallSpeed.y = -8;
                     
                     WinGame = 0;
                     CurenScreen = level_2;
+                }
+                
+                if(PowerUpIsAlive){
+                    PowerUpPosition.x += PowerUpSpeed.x;
+                    PowerUpPosition.y += PowerUpSpeed.y;
                 }
                 
                 //Bounce the ball of the boxes
@@ -158,6 +171,14 @@ int main(void)
                             Boxes[i].alive = false;
                             Score += 100;
                             WinGame++;
+                            if(PowerUpIsAlive == false){
+                                int SpawnPowerUp = rand() % 2;
+                                if(SpawnPowerUp == 1){
+                                    PowerUpPosition.x = BallPosition.x;
+                                    PowerUpPosition.y = BallPosition.y;
+                                    PowerUpIsAlive = true;
+                                }
+                            }
                         }
                     }
                 }
@@ -165,13 +186,25 @@ int main(void)
                 //The Ball abounce of the bord
                 if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
                     BallSpeed.y *= -1.0f;
-                    
+                    //Trying to make the ball bounce difrently depending on were on the bord it lands on
                     //BallSpeed.x = (BallPosition.x - BordPosition.x)/(BordWidth/2)*5;
                 }
                 
+                if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordWidth){
+                    PowerUpIsAlive = false;
+                    PowerUpPosition.x = 0;
+                    PowerUpPosition.y = 0;
+                    Lives++;
+                }
+                if(PowerUpPosition.y >= 650){
+                    PowerUpIsAlive = false;
+                    PowerUpPosition.x = 0;
+                    PowerUpPosition.y = 0;
+                }
+                
                 if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
-                    BallSpeed.x = 5;
-                    BallSpeed.y = -5;
+                    BallSpeed.x = 8;
+                    BallSpeed.y = -8;
                 }   
             }
             }break;
@@ -180,13 +213,13 @@ int main(void)
                 if(!exitWindowRequested){
                      if(BordPosition.x > 0){ // moves the board
                         if (IsKeyDown(KEY_A)){
-                            BordPosition.x -= 6;
+                            BordPosition.x -= 7;
                         }
                     }
                     
                     if(BordPosition.x < 850){ // moves the board
                         if (IsKeyDown(KEY_D)){
-                            BordPosition.x += 6;
+                            BordPosition.x += 7;
                         }
                     }
                 
@@ -208,9 +241,10 @@ int main(void)
                         BallSpeed.y = 0;
                         BallPosition.x = 525;
                         BallPosition.y = 570;
+                        Score -= 500;
                         if(Lives <= 0){
                             WinGame = 0;
-                            Lives =3;
+                            Lives = 3;
                             CurenScreen = GameOver;
                         }
                     }
@@ -228,8 +262,33 @@ int main(void)
                                 Boxes[i].alive = false;
                                 Score += 100;
                                 WinGame++;
+                                if(PowerUpIsAlive == false){
+                                    int SpawnPowerUp = rand() % 2;
+                                    if(SpawnPowerUp == 1){
+                                        PowerUpPosition.x = BallPosition.x;
+                                        PowerUpPosition.y = BallPosition.y;
+                                        PowerUpIsAlive = true;
+                                    }
+                                }                                                           
                             }
                         }
+                    }
+                    
+                    if(PowerUpIsAlive){
+                        PowerUpPosition.x += PowerUpSpeed.x;
+                        PowerUpPosition.y += PowerUpSpeed.y;
+                    }
+                    
+                    if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordWidth){
+                        PowerUpIsAlive = false;
+                        PowerUpPosition.x = 0;
+                        PowerUpPosition.y = 0;
+                        Lives++;
+                    }
+                    if(PowerUpPosition.y >= 650){
+                        PowerUpIsAlive = false;
+                        PowerUpPosition.x = 0;
+                        PowerUpPosition.y = 0;
                     }
                     
                     //The Ball abounce of the bord
@@ -238,8 +297,8 @@ int main(void)
                     }
                     
                     if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
-                        BallSpeed.x = 5;
-                        BallSpeed.y = -5;
+                        BallSpeed.x = 8;
+                        BallSpeed.y = -8;
                     }
                 }    
             }break;
@@ -253,9 +312,9 @@ int main(void)
                 
                     for(int i = 0; i < AmountOfBoxes; i++){
                         Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 90;
-                        Boxes[i].height = 40;
+                        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 95;
+                        Boxes[i].height = 50;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
@@ -268,8 +327,8 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -5;
-                    BallSpeed.y = -5;
+                    BallSpeed.x = -8;
+                    BallSpeed.y = -8;
                 
                     CurenScreen = level_1;
                 }
@@ -280,9 +339,9 @@ int main(void)
                 
                     for(int i = 0; i < AmountOfBoxes; i++){
                         Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 40.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 90;
-                        Boxes[i].height = 40;
+                        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                        Boxes[i].width = 95;
+                        Boxes[i].height = 50;
                         Boxes[i].alive = true;
                         Boxes[i].Hp = 1;
                     }
@@ -295,8 +354,8 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -5;
-                    BallSpeed.y = -5;
+                    BallSpeed.x = -8;
+                    BallSpeed.y = -8;
                 
                     CurenScreen = level_1;
                 }
@@ -345,6 +404,10 @@ int main(void)
                     }
                 }
                 DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
+                
+                if(PowerUpIsAlive){
+                    DrawRectangle(PowerUpPosition.x, PowerUpPosition.y, 30, 10, RED);
+                }
             }break;
             case level_2:
             {
@@ -360,6 +423,10 @@ int main(void)
                     }
                 }
                 DrawText(TextFormat("Lives: %03i", Lives), 10, 600, 20, LIGHTGRAY);
+                
+                if(PowerUpIsAlive){
+                    DrawRectangle(PowerUpPosition.x, PowerUpPosition.y, 30, 10, RED);
+                }
             }break;
             case level_3:
             {
@@ -370,6 +437,8 @@ int main(void)
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
                 DrawText("GameOver press [Space] to restart", 40, 180, 50, WHITE);
                 DrawText("Press [ESC] to quit", 40, 280, 50, WHITE);
+                DrawText(TextFormat("Score; %03i", Score), 40, 380, 50, WHITE);
+
             }break;
             case WinScreen:
             {
