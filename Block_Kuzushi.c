@@ -186,27 +186,25 @@ int main(void)
                 
                 //The Ball abounce of the bord
                 if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+                    float BordCenter = BordPosition.x + (BordWidth/2);
+                    float d = BordCenter - BallPosition.x;
                     
-                    /*BallSpeed.y *= -1.0f;
-                    //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                    BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*5;*/
+                    BallSpeed.y *= -1.0f;
+                    BallSpeed.x += d * -0.1f;
                     
-                    if(BallPosition.x < BordPosition.x + (BordWidth/2)){
+                    
+                    /*if(BallPosition.x < BordPosition.x + (BordWidth/2)){
                       BallSpeed.y *= -1.0f;
                       //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                      BallSpeed.x = (BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/2)*8;
+                      BallSpeed.x = ((BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/3))*8;
+                      
                       //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
                     }
                     if(BallPosition.x > BordPosition.x + (BordWidth/2)){
                       BallSpeed.y *= -1.0f;
-                      BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*-8;
-                    }
+                      BallSpeed.x = (((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/3))*-8;
+                    }*/
                 }
-                
-                /*if (CheckCollisionCircleRec(BallPosition, BallRadius,(Rectangle){ BordPosition.x - BordPosition.x/2, BordPosition.y - BordHight/2, BordWidth, BordHight})){
-                    BallSpeed.y *= -1;
-                    BallSpeed.x = (BallPosition.x - BordPosition.x)/(BordWidth/2)*5;
-                }*/
                 
                 if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordSize.x){
                     PowerUpIsAlive = false;
@@ -310,13 +308,20 @@ int main(void)
                     }
                     
                     //The Ball abounce of the bord
-                    if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+                    if(BallPosition.x < BordPosition.x + (BordWidth/2)){
                         BallSpeed.y *= -1.0f;
+                        //Trying to make the ball bounce difrently depending on were on the bord it lands on
+                        BallSpeed.x = (BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/2)*8;
+                        //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
+                    }
+                    if(BallPosition.x > BordPosition.x + (BordWidth/2)){
+                        BallSpeed.y *= -1.0f;
+                       BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*-8;
                     }
                     
                     if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
-                        BallSpeed.x = 8;
-                        BallSpeed.y = -8;
+                        BallSpeed.x = 5;
+                        BallSpeed.y = -5;
                     }
                 }    
             }break;
@@ -345,8 +350,8 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -8;
-                    BallSpeed.y = -8;
+                    BallSpeed.x = -5;
+                    BallSpeed.y = -5;
                 
                     CurenScreen = level_1;
                 }
@@ -372,8 +377,8 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -8;
-                    BallSpeed.y = -8;
+                    BallSpeed.x = -5;
+                    BallSpeed.y = -5;
                 
                     CurenScreen = level_1;
                 }
