@@ -47,9 +47,10 @@ int main(void)
     }
             
     Vector2 BordPosition = { 450, 600};
+    Vector2 BordSize = {150, 30};
     
     Vector2 BallPosition = { 525, 570};
-    Vector2 BallSpeed = { -8, -8}; 
+    Vector2 BallSpeed = { -5, -5}; 
     
     Vector2 PowerUpPosition;
     Vector2 PowerUpSpeed = {0, 2};
@@ -185,12 +186,29 @@ int main(void)
                 
                 //The Ball abounce of the bord
                 if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
-                    BallSpeed.y *= -1.0f;
+                    
+                    /*BallSpeed.y *= -1.0f;
                     //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                    //BallSpeed.x = (BallPosition.x - BordPosition.x)/(BordWidth/2)*5;
+                    BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*5;*/
+                    
+                    if(BallPosition.x < BordPosition.x + (BordWidth/2)){
+                      BallSpeed.y *= -1.0f;
+                      //Trying to make the ball bounce difrently depending on were on the bord it lands on
+                      BallSpeed.x = (BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/2)*8;
+                      //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
+                    }
+                    if(BallPosition.x > BordPosition.x + (BordWidth/2)){
+                      BallSpeed.y *= -1.0f;
+                      BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*-8;
+                    }
                 }
                 
-                if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordWidth){
+                /*if (CheckCollisionCircleRec(BallPosition, BallRadius,(Rectangle){ BordPosition.x - BordPosition.x/2, BordPosition.y - BordHight/2, BordWidth, BordHight})){
+                    BallSpeed.y *= -1;
+                    BallSpeed.x = (BallPosition.x - BordPosition.x)/(BordWidth/2)*5;
+                }*/
+                
+                if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordSize.x){
                     PowerUpIsAlive = false;
                     PowerUpPosition.x = 0;
                     PowerUpPosition.y = 0;
@@ -203,8 +221,8 @@ int main(void)
                 }
                 
                 if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
-                    BallSpeed.x = 8;
-                    BallSpeed.y = -8;
+                    BallSpeed.x = 5;
+                    BallSpeed.y = -5;
                 }   
             }
             }break;
