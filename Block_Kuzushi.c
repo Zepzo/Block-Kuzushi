@@ -152,8 +152,8 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     
-                    BallSpeed.x = -8;
-                    BallSpeed.y = -8;
+                    BallSpeed.x = -5;
+                    BallSpeed.y = -5;
                     
                     WinGame = 0;
                     CurenScreen = level_2;
@@ -190,7 +190,7 @@ int main(void)
                     float d = BordCenter - BallPosition.x;
                     
                     BallSpeed.y *= -1.0f;
-                    BallSpeed.x += d * -0.1f;
+                    BallSpeed.x = (d+1) * -0.1f;
                     
                     
                     /*if(BallPosition.x < BordPosition.x + (BordWidth/2)){
@@ -258,16 +258,40 @@ int main(void)
                         BallPosition.x = 525;
                         BallPosition.y = 570;
                         Score -= 500;
+
                         if(Lives <= 0){
                             WinGame = 0;
-                            Lives = 3;
                             CurenScreen = GameOver;
                         }
                     }
                     
                     if(WinGame == 10 * level_2){
+                        
+                        for(int i = 0; i < AmountOfBoxes * level_2; i++){
+                            Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                            Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                            Boxes[i].width = 95;
+                            Boxes[i].height = 50;
+                            Boxes[i].alive = true;
+                            Boxes[i].Hp = 1;
+                        }
+                        
+                        BordPosition.x = 450;
+                        BordPosition.y = 600;
+                        
+                        BallPosition.x = 525;
+                        BallPosition.y = 570;
+                        
+                        BallSpeed.x = -5;
+                        BallSpeed.y = -5;
+                        
                         WinGame = 0;
                         CurenScreen = WinScreen;
+                    }
+                    
+                    if(PowerUpIsAlive){
+                        PowerUpPosition.x += PowerUpSpeed.x;
+                        PowerUpPosition.y += PowerUpSpeed.y;
                     }
                     
                     //Bounce the ball of the boxes
@@ -285,17 +309,34 @@ int main(void)
                                         PowerUpPosition.y = BallPosition.y;
                                         PowerUpIsAlive = true;
                                     }
-                                }                                                           
+                                }
                             }
                         }
                     }
                     
-                    if(PowerUpIsAlive){
-                        PowerUpPosition.x += PowerUpSpeed.x;
-                        PowerUpPosition.y += PowerUpSpeed.y;
+                    //The Ball abounce of the bord
+                    if(BallPosition.y >= BordPosition.y && BallPosition.x >= BordPosition.x && BallPosition.x <= BordPosition.x + BordWidth){
+                        float BordCenter = BordPosition.x + (BordWidth/2);
+                        float d = BordCenter - BallPosition.x;
+                        
+                        BallSpeed.y *= -1.0f;
+                        BallSpeed.x = (d+1) * -0.1f;
+                        
+                        
+                        /*if(BallPosition.x < BordPosition.x + (BordWidth/2)){
+                          BallSpeed.y *= -1.0f;
+                          //Trying to make the ball bounce difrently depending on were on the bord it lands on
+                          BallSpeed.x = ((BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/3))*8;
+                          
+                          //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
+                        }
+                        if(BallPosition.x > BordPosition.x + (BordWidth/2)){
+                          BallSpeed.y *= -1.0f;
+                          BallSpeed.x = (((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/3))*-8;
+                        }*/
                     }
                     
-                    if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordWidth){
+                    if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordSize.x){
                         PowerUpIsAlive = false;
                         PowerUpPosition.x = 0;
                         PowerUpPosition.y = 0;
@@ -307,22 +348,10 @@ int main(void)
                         PowerUpPosition.y = 0;
                     }
                     
-                    //The Ball abounce of the bord
-                    if(BallPosition.x < BordPosition.x + (BordWidth/2)){
-                        BallSpeed.y *= -1.0f;
-                        //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                        BallSpeed.x = (BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/2)*8;
-                        //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
-                    }
-                    if(BallPosition.x > BordPosition.x + (BordWidth/2)){
-                        BallSpeed.y *= -1.0f;
-                       BallSpeed.x = ((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/2)*-8;
-                    }
-                    
                     if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
                         BallSpeed.x = 5;
                         BallSpeed.y = -5;
-                    }
+                    }   
                 }    
             }break;
             case level_3:
