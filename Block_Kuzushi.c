@@ -45,7 +45,7 @@ int main(void)
         Boxes[i].alive = true;
         Boxes[i].Hp = 1;
     }
-            
+    
     Vector2 BordPosition = { 450, 600};
     Vector2 BordSize = {150, 30};
     
@@ -66,6 +66,10 @@ int main(void)
     
     bool exitWindowRequested = false;   // Flag to request window to exit
     bool exitWindow = false;    // Flag to set window to exit
+    bool StartBoutton = false;
+    bool HowToBoutton = false;
+    bool ExitBoutton = false;
+
     
     int WinGame = 0;
     int Lives = 3;
@@ -90,6 +94,31 @@ int main(void)
         {
             case Main:
             {
+                Vector2 mouse = GetMousePosition();
+                if (CheckCollisionPointRec(mouse, (Rectangle){150, 64, 300, 50, RAYWHITE})) {
+                  StartBoutton = true;
+                  if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                      CurenScreen = level_1;
+                  }
+                }
+                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 164, 300, 50, RAYWHITE})) {
+                  HowToBoutton = true;
+                  if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                      CurenScreen = GameOver;
+                  }
+                }
+                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 264, 300, 50, RAYWHITE})) {
+                  ExitBoutton = true;
+                  if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                      exitWindow = true;
+                  }
+                }
+                else{
+                    StartBoutton = false;
+                    ExitBoutton = false;
+                    HowToBoutton = false;
+                }
+                
                 if(IsKeyPressed(KEY_SPACE)){ 
                     CurenScreen = level_1;
                 } 
@@ -192,18 +221,6 @@ int main(void)
                     BallSpeed.y *= -1.0f;
                     BallSpeed.x = (d+1) * -0.1f;
                     
-                    
-                    /*if(BallPosition.x < BordPosition.x + (BordWidth/2)){
-                      BallSpeed.y *= -1.0f;
-                      //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                      BallSpeed.x = ((BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/3))*8;
-                      
-                      //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
-                    }
-                    if(BallPosition.x > BordPosition.x + (BordWidth/2)){
-                      BallSpeed.y *= -1.0f;
-                      BallSpeed.x = (((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/3))*-8;
-                    }*/
                 }
                 
                 if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordSize.x){
@@ -322,18 +339,6 @@ int main(void)
                         BallSpeed.y *= -1.0f;
                         BallSpeed.x = (d+1) * -0.1f;
                         
-                        
-                        /*if(BallPosition.x < BordPosition.x + (BordWidth/2)){
-                          BallSpeed.y *= -1.0f;
-                          //Trying to make the ball bounce difrently depending on were on the bord it lands on
-                          BallSpeed.x = ((BallPosition.x - (BordPosition.x + (BordWidth/2)))/(BordWidth/3))*8;
-                          
-                          //ball.speed.x = (ball.position.x - player.position.x)/(player.size.x/2)*5; 
-                        }
-                        if(BallPosition.x > BordPosition.x + (BordWidth/2)){
-                          BallSpeed.y *= -1.0f;
-                          BallSpeed.x = (((BordPosition.x + (BordWidth/2)) - BallPosition.x)/(BordWidth/3))*-8;
-                        }*/
                     }
                     
                     if(PowerUpPosition.y >= BordPosition.y && PowerUpPosition.x >= BordPosition.x && PowerUpPosition.x <= BordPosition.x + BordSize.x){
@@ -440,7 +445,15 @@ int main(void)
             case Main:
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
-                DrawText("To start the game press [Space]", 40, 280, 50, WHITE);
+                
+                DrawRectangle(150, 64, 300, 50, StartBoutton ? GRAY : WHITE);
+                DrawText("Start", 170, 70, 30, BLACK);
+                
+                DrawRectangle(150, 164, 300, 50, HowToBoutton ? GRAY : WHITE);
+                DrawText("How to play", 170, 170, 30, BLACK);
+                
+                DrawRectangle(150, 264, 300, 50, ExitBoutton ? GRAY : WHITE);
+                DrawText("Exit", 170, 270, 30, BLACK);
             }break;
             case level_1:
             {
