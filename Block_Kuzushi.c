@@ -19,7 +19,7 @@ typedef struct Box{
     int Hp;
 }Box;
 
-typedef enum GameScreen {Main = 0, level_1, level_2, level_3, GameOver, WinScreen} GameScreen;
+typedef enum GameScreen {Main = 0, level_1, level_2, level_3, GameOver, HowToScreen} GameScreen;
 
 
 int main(void)
@@ -69,6 +69,7 @@ int main(void)
     bool StartBoutton = false;
     bool HowToBoutton = false;
     bool ExitBoutton = false;
+    bool ShootBall = false;
 
     
     int WinGame = 0;
@@ -78,7 +79,7 @@ int main(void)
     
     GameScreen CurenScreen = Main;
             
-    InitWindow(screenWidth, screenHeight, "My block kuzushi game");
+    InitWindow(screenWidth, screenHeight, "The bounce ball game");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -95,19 +96,19 @@ int main(void)
             case Main:
             {
                 Vector2 mouse = GetMousePosition();
-                if (CheckCollisionPointRec(mouse, (Rectangle){150, 64, 300, 50, RAYWHITE})) {
+                if (CheckCollisionPointRec(mouse, (Rectangle){150, 264, 120, 50, RAYWHITE})) {
                   StartBoutton = true;
                   if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                       CurenScreen = level_1;
                   }
                 }
-                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 164, 300, 50, RAYWHITE})) {
+                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 364, 220, 50, RAYWHITE})) {
                   HowToBoutton = true;
                   if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-                      CurenScreen = GameOver;
+                      CurenScreen = HowToScreen;
                   }
                 }
-                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 264, 300, 50, RAYWHITE})) {
+                else if (CheckCollisionPointRec(mouse, (Rectangle){150, 464, 100, 50, RAYWHITE})) {
                   ExitBoutton = true;
                   if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
                       exitWindow = true;
@@ -157,6 +158,7 @@ int main(void)
                     BallPosition.x = 525;
                     BallPosition.y = 570;
                     Score -= 500;
+                    ShootBall = true;
 
                     if(Lives <= 0){
                         WinGame = 0;
@@ -235,9 +237,10 @@ int main(void)
                     PowerUpPosition.y = 0;
                 }
                 
-                if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
+                if(ShootBall = true && IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
                     BallSpeed.x = 5;
                     BallSpeed.y = -5;
+                    ShootBall = false;
                 }   
             }
             }break;
@@ -275,6 +278,7 @@ int main(void)
                         BallPosition.x = 525;
                         BallPosition.y = 570;
                         Score -= 500;
+                        ShootBall = true;
 
                         if(Lives <= 0){
                             WinGame = 0;
@@ -303,7 +307,7 @@ int main(void)
                         BallSpeed.y = -5;
                         
                         WinGame = 0;
-                        CurenScreen = WinScreen;
+                        CurenScreen = GameOver;
                     }
                     
                     if(PowerUpIsAlive){
@@ -353,9 +357,10 @@ int main(void)
                         PowerUpPosition.y = 0;
                     }
                     
-                    if(IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
+                    if(ShootBall = true && IsKeyPressed(KEY_W)){ // bounce the ball again if it stops
                         BallSpeed.x = 5;
                         BallSpeed.y = -5;
+                        ShootBall = false;
                     }   
                 }    
             }break;
@@ -365,56 +370,55 @@ int main(void)
             }break;
             case GameOver:
             {
-                if(IsKeyPressed(KEY_SPACE)){ 
-                
-                    for(int i = 0; i < AmountOfBoxes; i++){
-                        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 95;
-                        Boxes[i].height = 50;
-                        Boxes[i].alive = true;
-                        Boxes[i].Hp = 1;
+                Vector2 mouse = GetMousePosition();
+                if(CheckCollisionPointRec(mouse, (Rectangle){150, 464, 200, 50, RAYWHITE})){ 
+                    StartBoutton = true;
+                    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                        for(int i = 0; i < AmountOfBoxes; i++){
+                            Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
+                            Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
+                            Boxes[i].width = 95;
+                            Boxes[i].height = 50;
+                            Boxes[i].alive = true;
+                            Boxes[i].Hp = 1;
+                        }
+                        
+                        Lives = 3;
+                        
+                        BordPosition.x = 450;
+                        BordPosition.y = 600;
+                        
+                        BallPosition.x = 525;
+                        BallPosition.y = 570;
+                        
+                        BallSpeed.x = -5;
+                        BallSpeed.y = -5;
+                    
+                        CurenScreen = Main;
                     }
-                    
-                    Lives = 3;
-                    
-                    BordPosition.x = 450;
-                    BordPosition.y = 600;
-                    
-                    BallPosition.x = 525;
-                    BallPosition.y = 570;
-                    
-                    BallSpeed.x = -5;
-                    BallSpeed.y = -5;
-                
-                    CurenScreen = level_1;
+                }
+                else if(CheckCollisionPointRec(mouse, (Rectangle){150, 564, 100, 50, RAYWHITE})){
+                    ExitBoutton = true;
+                    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                      exitWindow = true;
+                    }
+                }
+                else{
+                    ExitBoutton = false;
+                    StartBoutton = false;
                 }
             }break;
-            case WinScreen:
+            case HowToScreen:
             {
-                if(IsKeyPressed(KEY_SPACE)){ 
-                
-                    for(int i = 0; i < AmountOfBoxes; i++){
-                        Boxes[i].x = 5.0f + 90.0f *(i%10) + 10.0f *(i%10);
-                        Boxes[i].y = 10.0f + 90.0f *(i/10) + 10.0f *(i/10);
-                        Boxes[i].width = 95;
-                        Boxes[i].height = 50;
-                        Boxes[i].alive = true;
-                        Boxes[i].Hp = 1;
-                    }
-                    
-                    Lives = 3;
-                    
-                    BordPosition.x = 450;
-                    BordPosition.y = 600;
-                    
-                    BallPosition.x = 525;
-                    BallPosition.y = 570;
-                    
-                    BallSpeed.x = -5;
-                    BallSpeed.y = -5;
-                
-                    CurenScreen = level_1;
+                Vector2 mouse = GetMousePosition();
+                if (CheckCollisionPointRec(mouse, (Rectangle){150, 564, 120, 50, RAYWHITE})) {
+                  StartBoutton = true;
+                  if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+                      CurenScreen = Main;
+                  }
+                }
+                else{
+                    StartBoutton = false;
                 }
             }break;
             default: break;
@@ -446,14 +450,16 @@ int main(void)
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
                 
-                DrawRectangle(150, 64, 300, 50, StartBoutton ? GRAY : WHITE);
-                DrawText("Start", 170, 70, 30, BLACK);
+                DrawRectangle(150, 264, 120, 50, StartBoutton ? GRAY : WHITE);
+                DrawText("Start", 170, 270, 30, BLACK);
                 
-                DrawRectangle(150, 164, 300, 50, HowToBoutton ? GRAY : WHITE);
-                DrawText("How to play", 170, 170, 30, BLACK);
+                DrawRectangle(150, 364, 220, 50, HowToBoutton ? GRAY : WHITE);
+                DrawText("How to play", 170, 370, 30, BLACK);
                 
-                DrawRectangle(150, 264, 300, 50, ExitBoutton ? GRAY : WHITE);
-                DrawText("Exit", 170, 270, 30, BLACK);
+                DrawRectangle(150, 464, 100, 50, ExitBoutton ? GRAY : WHITE);
+                DrawText("Exit", 170, 470, 30, BLACK);
+                
+                DrawText("The bounce ball game", 70, 70, 80, WHITE);
             }break;
             case level_1:
             {
@@ -500,17 +506,26 @@ int main(void)
             case GameOver:
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
-                DrawText("GameOver press [Space] to restart", 40, 180, 50, WHITE);
-                DrawText("Press [ESC] to quit", 40, 280, 50, WHITE);
-                DrawText(TextFormat("Score; %03i", Score), 40, 380, 50, WHITE);
-
+                DrawText("GameOver press [Space] to restart", 40, 80, 50, WHITE);
+                DrawText("Press [ESC] to quit", 40, 180, 50, WHITE);
+                DrawText(TextFormat("Score; %03i", Score), 40, 280, 50, WHITE);
+                
+                DrawRectangle(150, 464, 200, 50, StartBoutton ? GRAY : WHITE);
+                DrawText("Main menu", 170, 470, 30, BLACK);
+                
+                DrawRectangle(150, 564, 100, 50, ExitBoutton ? GRAY : WHITE);
+                DrawText("Exit", 170, 570, 30, BLACK);
             }break;
-            case WinScreen:
+            case HowToScreen:
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
-                DrawText("You win, press [Space] to restart", 40, 180, 50, WHITE);
-                DrawText("Press [ESC] to quit", 40, 280, 50, WHITE);
-                DrawText(TextFormat("Score; %03i", Score), 40, 380, 50, WHITE);
+                DrawText("Move paddel: A/D", 40, 80, 50, WHITE);
+                DrawText("To shot the ball: W", 40, 180, 50, WHITE);
+                DrawText("To exit from anywere: ESC", 40, 280, 50, WHITE);
+                DrawText("Red blocks are extra lives", 40, 380, 50, WHITE);
+                
+                DrawRectangle(150, 564, 120, 50, StartBoutton ? GRAY : WHITE);
+                DrawText("Back", 170, 570, 30, BLACK);
             }break;
             default: break;
         }
